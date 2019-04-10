@@ -1,0 +1,14 @@
+@echo off
+
+setlocal enabledelayedexpansion
+
+copy *.csv new.csv
+
+echo @@@@@@@@@@@@@合并成功！@@@@@@@@@@@@@'
+
+pause
+
+
+
+### 双击命名把文档的后缀"txt"改成“bat”
+###双击bat文档，自动运行。就合并成新的文档自动命名为new.csv
