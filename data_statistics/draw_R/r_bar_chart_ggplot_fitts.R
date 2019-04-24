@@ -1,18 +1,19 @@
-# Draw histogram——completion rate/throughput/contact time/overshoot
+# Draw histogram——success_rate/throughput/contact time/break_rate
 library(Rmisc)
 library(ggplot2)
 library(grDevices)
 
 
-all_data<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\outcome_metrics_bar_chart_all.csv")
+all_data<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\outcome_metrics_bar_chart_all_supplement.csv")
 all_data
 
 head(all_data)
 
 
 #calculate
-sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("filter","model","state","metrics"))
-tgc <- sub_data[sub_data$state=="amputee" & sub_data$metrics=="throughput",]    #throughput/contact_time/overshoot
+sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("filter","model","metrics","state")) # "state"
+tgc <- sub_data[sub_data$state=="amputee" & sub_data$metrics=="break_rate",]    #throughput/contact_time/break_rate
+# tgc <- sub_data[sub_data$metrics=="throughput",]    #throughput/contact_time/break_rate
 tgc
 
 
@@ -24,7 +25,7 @@ p <- p + geom_errorbar(aes(ymin=var_value-se, ymax=var_value+se),width = 0.1,pos
 
 p <- p + labs(x=" ",y="var_value\n",title = "S\n") #title = "S3\n"
 p <- p + theme(axis.title.y=element_text(angle=90,colour="black",size=20))
-p <- p + geom_text(aes(y = 2,label=filter))
+p <- p + geom_text(aes(y = 1,label=filter))
 
 # p <- p + geom_text(aes(label=brittleness),position = position_dodge(width=0.4),vjust=-1.5)#图注或数据显示在上面
 

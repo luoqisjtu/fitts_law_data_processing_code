@@ -10,8 +10,8 @@ library(lmerTest)
 library(nlme)
 
 #1 succes_rate/throughput/overshoot双因素方差分析
-sub_data1<-read.csv("outcome_metrics_3.csv")
-demo1 <- sub_data1[sub_data1$state=="amputee" & sub_data1$metrics=="throughput",]    #throughput/success_rate/overshoot
+sub_data1<-read.csv("outcome_metrics_bar_chart_all_supplement.csv")
+demo1 <- sub_data1[sub_data1$state=="amputee" & sub_data1$metrics=="break_rate",]    #throughput/success_rate/break_rate
 demo1
 
 #1.1 正态性检验

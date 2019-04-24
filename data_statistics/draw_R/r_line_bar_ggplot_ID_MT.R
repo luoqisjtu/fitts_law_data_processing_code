@@ -4,19 +4,19 @@ library(ggplot2)
 library(grDevices)
 
 
-all_data<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\MT_line_chart_data_all.csv")
+all_data<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\MT_line_chart_data_all_supplement.csv")
 all_data
 
 head(all_data)
 
 
 #calculate          
-sub_data <- summarySE(all_data, measurevar="MT", groupvars=c("model","filter","number","ID","state"))  # 分析单个受试者或多个受试者对比时加上"subject"
+sub_data <- summarySE(all_data, measurevar="MT", groupvars=c("model","filter","number","ID","state" ))  #"state" #分析单个受试者或多个受试者对比时加上"subject"
 
-
-tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$state=="healthy",]
+# tgc <- sub_data[sub_data$filter=="bayes",]
+tgc <- sub_data[sub_data$filter=="bayes" & sub_data$state=="amputee",]
 # tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$subject=="S3" & (sub_data$model =="off" | sub_data$model =="on"),]
-# tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$subject=="S3" & sub_data$model =="on",]
+# tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$state=="amputee" & sub_data$model =="on",]
 
 tgc
 
@@ -42,20 +42,20 @@ l <- list(a = format(coef(model.lm)[1], digits = 3),
 eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2~","~italic(P)~"="~p, l)
 # eq2 <- substitute(italic(y) == a2 + b2 %.% italic(x)*","~~italic(r)^2~"="~r2~","~italic(P)~"="~p2, l)
 
-p1 <- p + geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq))), parse = TRUE, hjust=0.5, vjust=1) +
+p1 <- p + geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq))), parse = TRUE, hjust=1, vjust=1) +
   # geom_text(aes(x = 6, y = 15, label = as.charaMTer(as.expression(eq2))), parse = TRUE, hjust=1, vjust=1) +
-  # labs(title = "Amputated side (brittleness)") +
-  # labs(title = "Contralateral side(no brittleness)") +
-  labs(title = "S1") +
-  # theme_set(theme_bw()) +
+  labs(title = "S") +
   theme(plot.title=element_text(hjust=0.5)) +
+  
+  # xlim(3.5,6) +
+  # ylim(0,15) +
    
   theme(panel.grid.major=element_blank(),panel.grid.minor=element_blank()) +
   theme(panel.background = element_blank()) +
   theme(axis.line = element_line(colour = "black")) +
   
-  theme(axis.text.x = element_text(hjust=1, vjust=1, size=14)) +
-  theme(axis.text.y = element_text(angle=90, hjust=1, vjust=1, size=14)) +
+  theme(axis.text.x = element_text(hjust=0.5, vjust=1, size=14)) +
+  theme(axis.text.y = element_text(angle=90, hjust=0.5, vjust=1, size=14)) +
   
   xlab("ID\n") + 
   theme(axis.title.x=element_text(face="italic", colour="black", size=18)) +

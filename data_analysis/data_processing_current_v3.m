@@ -5,18 +5,19 @@ G = 2; %model off on
 Q = 6;%test重复次数 
 level = 6;   % 设置ID等级的数量     每个test文件夹里的csv文件个数
 
-mat_new_mt = cell(8,2);
+mat_new_mt = cell(6,2);
 SR = zeros(Q,2);
 overshoot = zeros(Q,2);
 RT = zeros(Q,2);
+TP = zeros(Q,2);
 %%  
 for g = 1:G
     
-    cd(strcat(['D:/Luoqi/fitts_law/amputee_data_and_results/data_analysis/S1_amputee_luxin_force_data_and_result_2018_12_30/model_',num2str(g)]));   %able-bodied_subject
+    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/S6_all_data/outcome_data/model_',num2str(g)]));  
     
     for q = 1:Q
 
-        cd(strcat(['D:/Luoqi/fitts_law/amputee_data_and_results/data_analysis/S1_amputee_luxin_force_data_and_result_2018_12_30/model_',num2str(g),'/model',num2str(g),'_bw_test_',num2str(q)]));
+        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/S6_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_ba_test_',num2str(q)]));
         %     files = dir([foldername '\*.csv']);                                      
         
         %% 读取力的大小值
@@ -38,7 +39,7 @@ for g = 1:G
             
             ID(k)=IDs(k,1);         
             
-            fname_read = ['Force_bar', num2str(k-1),'.csv'];   %起始ID这组数据不读进去 —— 把k-1改为k
+            fname_read = ['Force_bar', num2str(k),'.csv'];   %起始ID这组数据不读进去 —— 把k-1改为k
             F = csvread(fname_read,1,0);
             %  F= csvread(list(k+2).name,1,0);
             
@@ -69,7 +70,7 @@ for g = 1:G
             
             
             if(ID_time(k)>13||collision_p(k)~=0)
-                  ID_time(k)=0;  %ID_time(k)=[];
+                  ID_time(k)=100;  %ID_time(k)=[];
 %                   ID_number(k)=0;
                   ID(k)=0;
                   reaction_time(k)=0;
@@ -125,7 +126,7 @@ for g = 1:G
 %         saveas(figure(level+1),png);
          
         %% 计算每组sucess rate及平均reaction time
-          fail_nu = sum(ID_time == 0);  %MT被置为0的task个数（每组失败的task个数）
+          fail_nu = sum(ID_time == 100);  %MT被置为100的task个数（每组失败的task个数）
           SR(q,g) = 1 - fail_nu/6;
           
           overshoot(q,g) = cp_t/6;
@@ -133,8 +134,7 @@ for g = 1:G
 %           RT(q,g) = mean(reaction_time);
           RT(q,g) = sum(reaction_time)/(6-fail_nu);       
         %% 计算throughput(TP): TP= (ID1/MT1 + ID2/MT2 +...+ IDi/MTi )/N
-%         X=(ID)'./ID_time;
-%         TP=mean(X);
+         TP(q,g)=sum(ID./ID_time)/(6-fail_nu);
        %%
           mat_new_mt{q,g}(:,4)= reaction_time;
           mat_new_mt{q,g}(:,3)= ID_time;   
@@ -142,26 +142,26 @@ for g = 1:G
           mat_new_mt{q,g}(:,1)= ID_number;
           %aaaaa=sum(ID_time == 0);  aaaaa=find(ID_time == 0);        
           
-%           csvwrite('S1_bw_1_',num2str(q),'.csv',mat_new_mt{q,1});
-%           csvwrite('S1_bw_2_',num2str(q),'.csv',mat_new_mt{q,2});
+%           csvwrite('S6_ba_1_',num2str(q),'.csv',mat_new_mt{q,1});
+%           csvwrite('S6_ba_2_',num2str(q),'.csv',mat_new_mt{q,2});
            
-          csvwrite('S1_bw_1_1.csv',mat_new_mt{1,1});
-          csvwrite('S1_bw_1_2.csv',mat_new_mt{2,1});
-          csvwrite('S1_bw_1_3.csv',mat_new_mt{3,1});
-          csvwrite('S1_bw_1_4.csv',mat_new_mt{4,1});
-          csvwrite('S1_bw_1_5.csv',mat_new_mt{5,1});
-          csvwrite('S1_bw_1_6.csv',mat_new_mt{6,1});
-          csvwrite('S1_bw_1_7.csv',mat_new_mt{7,1});
-          csvwrite('S1_bw_1_8.csv',mat_new_mt{8,1});
+          csvwrite('S6_ba_1_1.csv',mat_new_mt{1,1});
+          csvwrite('S6_ba_1_2.csv',mat_new_mt{2,1});
+          csvwrite('S6_ba_1_3.csv',mat_new_mt{3,1});
+          csvwrite('S6_ba_1_4.csv',mat_new_mt{4,1});
+          csvwrite('S6_ba_1_5.csv',mat_new_mt{5,1});
+          csvwrite('S6_ba_1_6.csv',mat_new_mt{6,1});
+%           csvwrite('S6_ba_1_7.csv',mat_new_mt{7,1});
+%           csvwrite('S6_ba_1_8.csv',mat_new_mt{8,1});
           
-          csvwrite('S1_bw_2_1.csv',mat_new_mt{1,2});
-          csvwrite('S1_bw_2_2.csv',mat_new_mt{2,2});
-          csvwrite('S1_bw_2_3.csv',mat_new_mt{3,2});
-          csvwrite('S1_bw_2_4.csv',mat_new_mt{4,2});
-          csvwrite('S1_bw_2_5.csv',mat_new_mt{5,2});
-          csvwrite('S1_bw_2_6.csv',mat_new_mt{6,2});
-          csvwrite('S1_bw_2_7.csv',mat_new_mt{7,2});
-          csvwrite('S1_bw_2_8.csv',mat_new_mt{8,2});
+          csvwrite('S6_ba_2_1.csv',mat_new_mt{1,2});
+          csvwrite('S6_ba_2_2.csv',mat_new_mt{2,2});
+          csvwrite('S6_ba_2_3.csv',mat_new_mt{3,2});
+          csvwrite('S6_ba_2_4.csv',mat_new_mt{4,2});
+          csvwrite('S6_ba_2_5.csv',mat_new_mt{5,2});
+          csvwrite('S6_ba_2_6.csv',mat_new_mt{6,2});
+%           csvwrite('S6_ba_2_7.csv',mat_new_mt{7,2});
+%           csvwrite('S6_ba_2_8.csv',mat_new_mt{8,2});
 
     end       
 
@@ -169,6 +169,6 @@ end
 
 
 %%  结果保存为.mat文件
-cd('D:\Luoqi\fitts_law\amputee_data_and_results\data_analysis\S1_amputee_luxin_force_data_and_result_2018_12_30');
-save(['S1_amputee_luxin_bw.mat']);    % 
+cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\S6_all_data\outcome_data');
+save(['S6_ba.mat']);    % 
 %cd \
