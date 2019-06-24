@@ -4,16 +4,17 @@ library(ggplot2)
 library(grDevices)
 
 
-all_data<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\outcome_metrics_bar_chart_all_supplement.csv")
+all_data<-read.csv("outcome_metrics_bar_chart_all_supplement.csv")
 all_data
 
 head(all_data)
 
 
 #calculate
-sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("filter","model","metrics","state")) # "state"
-tgc <- sub_data[sub_data$state=="amputee" & sub_data$metrics=="break_rate",]    #throughput/contact_time/break_rate
-# tgc <- sub_data[sub_data$metrics=="throughput",]    #throughput/contact_time/break_rate
+#sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("filter","model","metrics","state")) # state-healthy/amputee
+sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("model","metrics","state")) 
+tgc <- sub_data[sub_data$state=="healthy" & sub_data$metrics=="throughput",]    #throughput/success_rate/break_rate
+# tgc <- sub_data[sub_data$metrics=="success_rate",]    #throughput/success_rate/break_rate
 tgc
 
 

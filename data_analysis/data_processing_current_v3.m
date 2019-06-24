@@ -1,23 +1,23 @@
 %% 遍历文件夹
-clear; clc;                                                                         %把t>=14s和碰到禁止区域对应的trial的MT去掉
+clear; clc;                                                                      %% MT-movement time   CT-completion time   
 %%
 G = 2; %model off on
 Q = 6;%test重复次数 
 level = 6;   % 设置ID等级的数量     每个test文件夹里的csv文件个数
 
-mat_new_mt = cell(6,2);
+mat_new_ct = cell(6,2);
 SR = zeros(Q,2);
-overshoot = zeros(Q,2);
-RT = zeros(Q,2);
+break_rate = zeros(Q,2);
+MT = zeros(Q,2);
 TP = zeros(Q,2);
 %%  
 for g = 1:G
     
-    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/S6_all_data/outcome_data/model_',num2str(g)]));  
+    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/whole_fitts/S1_all_data/outcome_data/model_',num2str(g)]));  
     
     for q = 1:Q
 
-        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/S6_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_ba_test_',num2str(q)]));
+        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis//whole_fitts/S1_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_para1_test',num2str(q)]));
         %     files = dir([foldername '\*.csv']);                                      
         
         %% 读取力的大小值
@@ -30,7 +30,7 @@ for g = 1:G
         ID=zeros(level,1);
         ID_time=zeros(level,1);
         ID_time_re=zeros(level,1);
-        reaction_time=zeros(level,1);
+        movement_time=zeros(level,1);
         collision_p=zeros(level,1);
         
         IDs =[5.17;4.37;3.59;4.95;4.17;5.95];
@@ -58,29 +58,29 @@ for g = 1:G
             end
             
             ID_number(k)=k;
-            ID_time(k)=t(length(t)-300)-t(start_time);
-            ID_time_re(k)=t(length(t)-300)-0.2;
-            reaction_time(k) = ID_time_re(k)-ID_time(k);
+            ID_time(k)=t(length(t)-500)-t(start_time);   %300
+            ID_time_re(k)=t(length(t)-500)-0.2;      %0.2s-在unity中设置，目标出现0.2s后，task开始
+            movement_time(k) = ID_time_re(k)-ID_time(k);
             
             
             %统计每组task碰到禁止区域的次数(0-没有碰到，1-碰到)
-            collision =  F(:,6);
+            collision = F(:,6);
             collision_p(k) = sum(collision == 1);
             cp_t = sum(collision_p~=0);   %碰到禁止区域次数
             
             
-            if(ID_time(k)>13||collision_p(k)~=0)
+            if(ID_time(k)>13||collision_p(k)~=0||movement_time(k)<0)            %%t>13或碰到禁止区域或没有从起始位置出发对应的trial记为fail    
                   ID_time(k)=100;  %ID_time(k)=[];
 %                   ID_number(k)=0;
                   ID(k)=0;
-                  reaction_time(k)=0;
+                  movement_time(k)=0;
             end
                                  
 
           %%             
             
             figure(k),
-            plot(t(1:length(t)-300),F(1:length(F)-300,2)-0.002,'linewidth',1.5,'color',[0,0,1]); hold on;     % 横纵坐标都要去掉最后的3s的数据，也就是300个数
+            plot(t(1:length(t)-500),F(1:length(F)-500,2)-0.002,'linewidth',1.5,'color',[0,0,1]); hold on;     % 横纵坐标都要去掉最后的5s的数据，也就是500个数  % 3s  300
             %plot(t(1:length(t)),F(1:length(F),2)-0.002,'linewidth',1.5,'color',[0,0,1]); hold on;
             
             xlim=get(gca,'Xlim'); % 获取当前图形的纵轴的范围
@@ -125,43 +125,45 @@ for g = 1:G
 %         png=sprintf('time_ID.png');
 %         saveas(figure(level+1),png);
          
-        %% 计算每组sucess rate及平均reaction time
-          fail_nu = sum(ID_time == 100);  %MT被置为100的task个数（每组失败的task个数）
+        %% 计算每组sucess rate及平均movement time
+          fail_nu = sum(ID_time == 100);  %CT被置为100的task个数（每组失败的task个数）
           SR(q,g) = 1 - fail_nu/6;
           
-          overshoot(q,g) = cp_t/6;
+          break_rate(q,g) = cp_t/6;
           
-%           RT(q,g) = mean(reaction_time);
-          RT(q,g) = sum(reaction_time)/(6-fail_nu);       
-        %% 计算throughput(TP): TP= (ID1/MT1 + ID2/MT2 +...+ IDi/MTi )/N
+%           MT(q,g) = mean(movement_time);
+          MT(q,g) = sum(movement_time)/(6-fail_nu);       
+          
+        %% 计算throughput(TP): TP= (ID1/CT1 + ID2/CT2 +...+ IDi/CTi )/N
          TP(q,g)=sum(ID./ID_time)/(6-fail_nu);
+         
        %%
-          mat_new_mt{q,g}(:,4)= reaction_time;
-          mat_new_mt{q,g}(:,3)= ID_time;   
-          mat_new_mt{q,g}(:,2)= ID;
-          mat_new_mt{q,g}(:,1)= ID_number;
+          mat_new_ct{q,g}(:,4)= movement_time;
+          mat_new_ct{q,g}(:,3)= ID_time;   
+          mat_new_ct{q,g}(:,2)= ID;
+          mat_new_ct{q,g}(:,1)= ID_number;
           %aaaaa=sum(ID_time == 0);  aaaaa=find(ID_time == 0);        
           
-%           csvwrite('S6_ba_1_',num2str(q),'.csv',mat_new_mt{q,1});
-%           csvwrite('S6_ba_2_',num2str(q),'.csv',mat_new_mt{q,2});
+%           csvwrite('S1_para1_1_',num2str(q),'.csv',mat_new_ct{q,1});
+%           csvwrite('S1_para1_2_',num2str(q),'.csv',mat_new_ct{q,2});
            
-          csvwrite('S6_ba_1_1.csv',mat_new_mt{1,1});
-          csvwrite('S6_ba_1_2.csv',mat_new_mt{2,1});
-          csvwrite('S6_ba_1_3.csv',mat_new_mt{3,1});
-          csvwrite('S6_ba_1_4.csv',mat_new_mt{4,1});
-          csvwrite('S6_ba_1_5.csv',mat_new_mt{5,1});
-          csvwrite('S6_ba_1_6.csv',mat_new_mt{6,1});
-%           csvwrite('S6_ba_1_7.csv',mat_new_mt{7,1});
-%           csvwrite('S6_ba_1_8.csv',mat_new_mt{8,1});
+          csvwrite('S1_para1_1_1.csv',mat_new_ct{1,1});
+          csvwrite('S1_para1_1_2.csv',mat_new_ct{2,1});
+          csvwrite('S1_para1_1_3.csv',mat_new_ct{3,1});
+          csvwrite('S1_para1_1_4.csv',mat_new_ct{4,1});
+          csvwrite('S1_para1_1_5.csv',mat_new_ct{5,1});
+          csvwrite('S1_para1_1_6.csv',mat_new_ct{6,1});
+%           csvwrite('S1_para1_1_7.csv',mat_new_ct{7,1});
+%           csvwrite('S1_para1_1_8.csv',mat_new_ct{8,1});
           
-          csvwrite('S6_ba_2_1.csv',mat_new_mt{1,2});
-          csvwrite('S6_ba_2_2.csv',mat_new_mt{2,2});
-          csvwrite('S6_ba_2_3.csv',mat_new_mt{3,2});
-          csvwrite('S6_ba_2_4.csv',mat_new_mt{4,2});
-          csvwrite('S6_ba_2_5.csv',mat_new_mt{5,2});
-          csvwrite('S6_ba_2_6.csv',mat_new_mt{6,2});
-%           csvwrite('S6_ba_2_7.csv',mat_new_mt{7,2});
-%           csvwrite('S6_ba_2_8.csv',mat_new_mt{8,2});
+          csvwrite('S1_para1_2_1.csv',mat_new_ct{1,2});
+          csvwrite('S1_para1_2_2.csv',mat_new_ct{2,2});
+          csvwrite('S1_para1_2_3.csv',mat_new_ct{3,2});
+          csvwrite('S1_para1_2_4.csv',mat_new_ct{4,2});
+          csvwrite('S1_para1_2_5.csv',mat_new_ct{5,2});
+          csvwrite('S1_para1_2_6.csv',mat_new_ct{6,2});
+%           csvwrite('S1_para1_2_7.csv',mat_new_ct{7,2});
+%           csvwrite('S1_para1_2_8.csv',mat_new_ct{8,2});
 
     end       
 
@@ -169,6 +171,6 @@ end
 
 
 %%  结果保存为.mat文件
-cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\S6_all_data\outcome_data');
-save(['S6_ba.mat']);    % 
+cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\whole_fitts\S1_all_data\outcome_data');
+save(['S1_para1.mat']);    % 
 %cd \

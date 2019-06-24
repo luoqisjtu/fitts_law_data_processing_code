@@ -13,10 +13,10 @@ head(all_data)
 #calculate          
 sub_data <- summarySE(all_data, measurevar="MT", groupvars=c("model","filter","number","ID","state" ))  #"state" #分析单个受试者或多个受试者对比时加上"subject"
 
-# tgc <- sub_data[sub_data$filter=="bayes",]
-tgc <- sub_data[sub_data$filter=="bayes" & sub_data$state=="amputee",]
+# tgc <- sub_data[sub_data$filter=="butterworth",]
+# tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$state=="amputee",]
 # tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$subject=="S3" & (sub_data$model =="off" | sub_data$model =="on"),]
-# tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$state=="amputee" & sub_data$model =="on",]
+tgc <- sub_data[sub_data$filter=="bayes" & sub_data$state=="amputee" & sub_data$model =="off",]
 
 tgc
 
@@ -47,8 +47,8 @@ p1 <- p + geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq))),
   labs(title = "S") +
   theme(plot.title=element_text(hjust=0.5)) +
   
-  # xlim(3.5,6) +
-  # ylim(0,15) +
+  xlim(3.5,6) +
+  ylim(0,15) +
    
   theme(panel.grid.major=element_blank(),panel.grid.minor=element_blank()) +
   theme(panel.background = element_blank()) +

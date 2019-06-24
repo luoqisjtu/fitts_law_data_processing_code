@@ -6,12 +6,12 @@ library(car)
 library(userfriendlyscience)
 library(Rmisc)
 library(grDevices)
-library(lmerTest)
+library(lmerTes)
 library(nlme)
 
 #1 succes_rate/throughput/overshoot双因素方差分析
 sub_data1<-read.csv("outcome_metrics_bar_chart_all_supplement.csv")
-demo1 <- sub_data1[sub_data1$state=="amputee" & sub_data1$metrics=="break_rate",]    #throughput/success_rate/break_rate
+demo1 <- sub_data1[sub_data1$state=="amputee" & sub_data1$metrics=="success_rate",]    #throughput/success_rate/break_rate
 demo1
 
 #1.1 正态性检验
@@ -23,6 +23,11 @@ leveneTest(var_value~model,demo1)   #两组数据可用bartlett.test,3组或3组以上用lev
 #1.3 双因素方差分析aov
 AOV1 <- aov(var_value~filter*model,demo1)
 summary(AOV1)
+model.tables(AOV1,"means")
+
+sum = summarySE(demo1, measurevar="break_rate", groupvars=c("filter","model"))
+sum
+
 
 #1.4 双因素方差分析lm,anova
 AOV1=lm(var_value~filter*model,data=demo1)

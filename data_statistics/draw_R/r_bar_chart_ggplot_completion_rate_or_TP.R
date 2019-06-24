@@ -3,7 +3,7 @@ library(ggplot2)
 library(grDevices)
 
 
-tg<-read.csv("D:\\Luoqi\\fitts_law\\experiement_results\\S3_liujiayue_2018_12_10\\RT_bar_chart_left_S3.csv")
+tg<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\RT_bar_chart_left_S3.csv")
 tg
 
 
