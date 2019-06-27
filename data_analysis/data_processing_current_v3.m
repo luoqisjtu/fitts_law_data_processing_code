@@ -1,5 +1,7 @@
 %% 遍历文件夹
-clear; clc;                                                                      %% MT-movement time   CT-completion time   
+clear; clc;                                                                      %% MT-movement time   CT-completion time 
+%%
+path = pwd;
 %%
 G = 2; %model off on
 Q = 6;%test重复次数 
@@ -10,14 +12,16 @@ SR = zeros(Q,2);
 break_rate = zeros(Q,2);
 MT = zeros(Q,2);
 TP = zeros(Q,2);
+datasave1 = zeros(Q,4);
+datasave2 = zeros(Q,4);
 %%  
 for g = 1:G
     
-    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/whole_fitts/S1_all_data/outcome_data/model_',num2str(g)]));  
+    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/whole_fitts/S2_all_data/outcome_data/model_',num2str(g)]));  
     
     for q = 1:Q
 
-        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis//whole_fitts/S1_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_para1_test',num2str(q)]));
+        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis//whole_fitts/S2_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_para2_test',num2str(q)]));
         %     files = dir([foldername '\*.csv']);                                      
         
         %% 读取力的大小值
@@ -33,7 +37,7 @@ for g = 1:G
         movement_time=zeros(level,1);
         collision_p=zeros(level,1);
         
-        IDs =[5.17;4.37;3.59;4.95;4.17;5.95];
+        IDs =[5.17;4.37;3.59;5.95;4.17;4.95];   %IDs =[5.17;4.37;3.59;4.95;4.17;5.95];  当在实验设置中改变不同ID的task顺序时，此处也要相应调整顺序！！！！！！
         
         for k=1:level
             
@@ -49,7 +53,7 @@ for g = 1:G
             t_ = 0: 0.01:max_t;
             t = t_';
             
-            %统计力条上升的时间，从力条开始移动的时间算起 %%%%起始的压力值根据实际的情况可以调整？？？？？没有考虑到
+            %统计力条上升的时间，从力条开始移动的时间算起 %%%%起始的压力值根据实际的情况可以调整
             for m=1:length(F(:,2))
                 if(F(m,2)>0.1)
                     start_time=m;
@@ -144,33 +148,40 @@ for g = 1:G
           mat_new_ct{q,g}(:,1)= ID_number;
           %aaaaa=sum(ID_time == 0);  aaaaa=find(ID_time == 0);        
           
-%           csvwrite('S1_para1_1_',num2str(q),'.csv',mat_new_ct{q,1});
-%           csvwrite('S1_para1_2_',num2str(q),'.csv',mat_new_ct{q,2});
-           
-          csvwrite('S1_para1_1_1.csv',mat_new_ct{1,1});
-          csvwrite('S1_para1_1_2.csv',mat_new_ct{2,1});
-          csvwrite('S1_para1_1_3.csv',mat_new_ct{3,1});
-          csvwrite('S1_para1_1_4.csv',mat_new_ct{4,1});
-          csvwrite('S1_para1_1_5.csv',mat_new_ct{5,1});
-          csvwrite('S1_para1_1_6.csv',mat_new_ct{6,1});
-%           csvwrite('S1_para1_1_7.csv',mat_new_ct{7,1});
-%           csvwrite('S1_para1_1_8.csv',mat_new_ct{8,1});
-          
-          csvwrite('S1_para1_2_1.csv',mat_new_ct{1,2});
-          csvwrite('S1_para1_2_2.csv',mat_new_ct{2,2});
-          csvwrite('S1_para1_2_3.csv',mat_new_ct{3,2});
-          csvwrite('S1_para1_2_4.csv',mat_new_ct{4,2});
-          csvwrite('S1_para1_2_5.csv',mat_new_ct{5,2});
-          csvwrite('S1_para1_2_6.csv',mat_new_ct{6,2});
-%           csvwrite('S1_para1_2_7.csv',mat_new_ct{7,2});
-%           csvwrite('S1_para1_2_8.csv',mat_new_ct{8,2});
+%           csvwrite('S2_para2_1_',num2str(q),'.csv',mat_new_ct{q,1});
+%           csvwrite('S2_para2_2_',num2str(q),'.csv',mat_new_ct{q,2});
+%           csvwrite('S2_para2_1.csv',mat_new_ct{q,1});
+%           csvwrite('S2_para2_2.csv',mat_new_ct{q,2});   
+%      csvwrite('S2_para2_1.csv',mat_new_ct{q,1},((q-1)*6+1):((q-1)*6+6),0);
+%      csvwrite('S2_para2_2.csv',mat_new_ct{q,2},((q-1)*6+1):((q-1)*6+6),0); 
 
-    end       
-
+    end      
+            
 end   
+%%   Data Save
+cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\whole_fitts\S2_all_data\outcome_data');
+        [row,col]=size(mat_new_ct);
+        filename1='mode1_para2.csv';%.csv可以更改为.txt等
+        filename2='mode2_para2.csv';
+        fid1=fopen(filename1,'w');
+        fid2=fopen(filename2,'w');
+        count=0;
+        for index=1:row
+            bbx1=mat_new_ct{index,1};
+            bbx2=mat_new_ct{index,2};
+            [a,b]=size(bbx1);
+            for i=1:a
+                count=count+1;
+                fprintf(fid1,'%f,%f,%f, %f ,%f\n',count,bbx1(i,:));
+                fprintf(fid2,'%f,%f,%f, %f ,%f\n',count,bbx2(i,:));
+            end
+        end
 
-
+%     cd(path)
+%     str1 = {'Number','ID','CT','MT'}
+%     numcell = num2cell(mat_new_ct{q,g});      %将矩阵的每个数单独做一个cell小单元，matalb版本低可能不支持这个函数
+%     celldata = [numcell;str1];
+%     cell2csv('testdata.csv',celldata)
 %%  结果保存为.mat文件
-cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\whole_fitts\S1_all_data\outcome_data');
-save(['S1_para1.mat']);    % 
+save(['S2_para2.mat']);    % 
 %cd \
