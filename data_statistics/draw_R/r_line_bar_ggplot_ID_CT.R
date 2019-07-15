@@ -4,33 +4,34 @@ library(ggplot2)
 library(grDevices)
 
 
-all_data<-read.csv("D:\\Luoqi\\fitts_law\\fitts_all_result_analysis\\conjoint_analysis_results\\MT_line_chart_data_all_supplement.csv")
+all_data<-read.csv("CT_line_chart_data_S2.csv")
 all_data
 
 head(all_data)
 
 
 #calculate          
-sub_data <- summarySE(all_data, measurevar="MT", groupvars=c("model","filter","number","ID","state" ))  #"state" #分析单个受试者或多个受试者对比时加上"subject"
+# sub_data <- summarySE(all_data, measurevar="CT", groupvars=c("model","filter","number","ID","state" ))  #"state" #分析单个受试者或多个受试者对比时加上"subject"
+sub_data <- summarySE(all_data, measurevar="CT", groupvars=c("spindle_para","model","number","ID"))
 
-# tgc <- sub_data[sub_data$filter=="butterworth",]
+tgc <- sub_data[sub_data$spindle_para=="para2",]
 # tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$state=="amputee",]
 # tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$subject=="S3" & (sub_data$model =="off" | sub_data$model =="on"),]
-tgc <- sub_data[sub_data$filter=="bayes" & sub_data$state=="amputee" & sub_data$model =="off",]
+# tgc <- sub_data[sub_data$filter=="bayes" & sub_data$state=="amputee" & sub_data$model =="off",]
 
 tgc
 
 
 
-p <- ggplot(tgc, aes(x=ID, y=MT,shape=model, color=model)) +
-  geom_errorbar(aes(ymin=MT-se, ymax=MT+se), width=.1) +
+p <- ggplot(tgc, aes(x=ID, y=CT,shape=model, color=model)) +
+  geom_errorbar(aes(ymin=CT-se, ymax=CT+se), width=.1) +
   # geom_line(position=position_dodge(0.2)) + # Dodge lines by 0.2
   geom_point(size=2)+
   geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  #添加回归线
   # geom_smooth(method = "lm", se=FALSE, color="red", formula = y ~ x)
 
 
-model.lm <- lm(MT ~ ID, data = tgc)
+model.lm <- lm(CT ~ ID, data = tgc)
 summary(model.lm)
 
 l <- list(a = format(coef(model.lm)[1], digits = 3),
@@ -59,7 +60,7 @@ p1 <- p + geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq))),
   
   xlab("ID\n") + 
   theme(axis.title.x=element_text(face="italic", colour="black", size=18)) +
-  ylab("MT(s)\n")+
+  ylab("CT(s)\n")+
   theme(axis.title.y=element_text(angle=90, face="italic", colour="black",size=18)) +
   
   theme(panel.border = element_blank())
