@@ -4,34 +4,34 @@ library(ggplot2)
 library(grDevices)
 
 
-all_data<-read.csv("CT_line_chart_data_S2.csv")
+all_data<-read.csv("MT_line_chart_data_S1.csv")
 all_data
 
 head(all_data)
 
 
 #calculate          
-# sub_data <- summarySE(all_data, measurevar="CT", groupvars=c("model","filter","number","ID","state" ))  #"state" #分析单个受试者或多个受试者对比时加上"subject"
-sub_data <- summarySE(all_data, measurevar="CT", groupvars=c("spindle_para","model","number","ID"))
+# sub_data <- summarySE(all_data, measurevar="MT", groupvars=c("model","filter","number","ID","state" ))  #"state" #分析单个受试者或多个受试者对比时加上"subjeMT"
+sub_data <- summarySE(all_data, measurevar="MT", groupvars=c("model","number","ID"))
 
-tgc <- sub_data[sub_data$spindle_para=="para2",]
+tgc <- sub_data
 # tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$state=="amputee",]
-# tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$subject=="S3" & (sub_data$model =="off" | sub_data$model =="on"),]
+# tgc <- sub_data[sub_data$filter=="butterworth" & sub_data$subjeMT=="S3" & (sub_data$model =="off" | sub_data$model =="on"),]
 # tgc <- sub_data[sub_data$filter=="bayes" & sub_data$state=="amputee" & sub_data$model =="off",]
 
 tgc
 
 
 
-p <- ggplot(tgc, aes(x=ID, y=CT,shape=model, color=model)) +
-  geom_errorbar(aes(ymin=CT-se, ymax=CT+se), width=.1) +
+p <- ggplot(tgc, aes(x=ID, y=MT,shape=model, color=model)) +
+  geom_errorbar(aes(ymin=MT-se, ymax=MT+se), width=.1) +
   # geom_line(position=position_dodge(0.2)) + # Dodge lines by 0.2
   geom_point(size=2)+
   geom_smooth(method="lm", se=FALSE, fullrange=TRUE)  #添加回归线
   # geom_smooth(method = "lm", se=FALSE, color="red", formula = y ~ x)
 
 
-model.lm <- lm(CT ~ ID, data = tgc)
+model.lm <- lm(MT ~ ID, data = tgc)
 summary(model.lm)
 
 l <- list(a = format(coef(model.lm)[1], digits = 3),
@@ -43,13 +43,13 @@ l <- list(a = format(coef(model.lm)[1], digits = 3),
 eq <- substitute(italic(y) == a + b %.% italic(x)*","~~italic(r)^2~"="~r2~","~italic(P)~"="~p, l)
 # eq2 <- substitute(italic(y) == a2 + b2 %.% italic(x)*","~~italic(r)^2~"="~r2~","~italic(P)~"="~p2, l)
 
-p1 <- p + geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq))), parse = TRUE, hjust=1, vjust=1) +
-  # geom_text(aes(x = 6, y = 15, label = as.charaMTer(as.expression(eq2))), parse = TRUE, hjust=1, vjust=1) +
+p1 <- p + geom_text(aes(x = 6, y = 8, label = as.character(as.expression(eq))), parse = TRUE, hjust=1, vjust=1) +
+  # geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq2))), parse = TRUE, hjust=1, vjust=1) +
   labs(title = "S") +
   theme(plot.title=element_text(hjust=0.5)) +
   
   xlim(3.5,6) +
-  ylim(0,15) +
+  ylim(0,8) +
    
   theme(panel.grid.major=element_blank(),panel.grid.minor=element_blank()) +
   theme(panel.background = element_blank()) +
@@ -60,7 +60,7 @@ p1 <- p + geom_text(aes(x = 6, y = 15, label = as.character(as.expression(eq))),
   
   xlab("ID\n") + 
   theme(axis.title.x=element_text(face="italic", colour="black", size=18)) +
-  ylab("CT(s)\n")+
+  ylab("MT(s)\n")+
   theme(axis.title.y=element_text(angle=90, face="italic", colour="black",size=18)) +
   
   theme(panel.border = element_blank())

@@ -4,7 +4,7 @@ library(ggplot2)
 library(grDevices)
 
  
-all_data<-read.csv("grip_task_outcome_metrics.csv")    #outcome_metrics_bar_chart_S2.csv
+all_data<-read.csv("functional_task_outcome_metrics_S1.csv")    #     outcome_metrics_bar_chart_S1.csv
 all_data
 
 head(all_data)
@@ -12,9 +12,10 @@ head(all_data)
 
 #calculate
 #sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("filter","model","metrics","state")) # state-healthy/amputee
-sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("task","model"))  #condition
+sub_data <- summarySE(all_data, measurevar="var_value", groupvars=c("model","task"))  #metrics
 # tgc <- sub_data[sub_data$state=="healthy" & sub_data$metrics=="throughput",]    #throughput/success_rate/break_rate
-tgc <- sub_data[sub_data$task=="bbt",]   #throughput/success_rate/break_rate
+# tgc <- sub_data[sub_data$metrics=="throughput",]    
+tgc <- sub_data[sub_data$task=="crt",]   #crt/nhp
 tgc
 
 
@@ -23,11 +24,11 @@ p <- ggplot(data = tgc, aes(x='',y=var_value, fill = model))  ###### one factor/
 # p <- ggplot(data = tgc, aes(x=condition,y=var_value, fill = model))  ###### x=filter     two factor/condition 
 p <- p + geom_bar( stat="identity",width=0.85,position="dodge") 
 
-p <- p + geom_errorbar(aes(ymin=var_value-sd, ymax=var_value+sd),width = 0.1,position = position_dodge(width=0.85))
+p <- p + geom_errorbar(aes(ymin=var_value-se, ymax=var_value+se),width = 0.1,position = position_dodge(width=0.85))
 
-p <- p + labs(x=" ",y="Blocks/min\n",title = "8-side die\n") #title = "S3\n"   var_value  Blocks/min   8-side die  Nine hole peg   Clothespin relocation
+p <- p + labs(x=" ",y="CRT\n",title = "S1\n") #title = "S3\n"   var_value  Blocks/min   8-side die  Nine hole peg   Clothespin relocation
 p <- p + theme(axis.title.y=element_text(angle=90,colour="black",size=20))
-p <- p + geom_text(aes(y = 25,label='')) ######label=filter
+p <- p + geom_text(aes(y = 15,label='')) ######label=filter
 
 # p <- p + geom_text(aes(label=brittleness),position = position_dodge(width=0.4),vjust=-1.5)#图注或数据显示在上面
 

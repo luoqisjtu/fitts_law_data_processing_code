@@ -10,9 +10,10 @@ library(lmerTes)
 library(nlme)
 
 #1 succes_rate/throughput/overshootË«ÒòËØ·½²î·ÖÎö
-sub_data1<-read.csv("grip_task_outcome_metrics.csv")
+sub_data1<-read.csv("force_rmse_S1.csv")   #outcome_metrics_bar_chart_S1.csv
 # demo1 <- sub_data1[sub_data1$state=="amputee" & sub_data1$metrics=="success_rate",]    #throughput/success_rate/break_rate
-demo1 <- sub_data1[sub_data1$task=="crt",]    #throughput/success_rate/break_rate
+# demo1 <- sub_data1[sub_data1$task=="bbt",]    #bbt/nhp
+demo1 <- sub_data1
 demo1
 
 
