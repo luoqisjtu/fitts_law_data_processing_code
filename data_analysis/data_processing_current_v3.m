@@ -3,29 +3,30 @@ clear; clc;                                                                     
 %%
 path = pwd;
 %%
-G = 2; %model off on
+G = 4; %model PD+linear feedback;  pilot model;  full model; human hand
 Q = 8;%test重复次数 
 level = 6;   % 设置ID等级的数量     每个test文件夹里的csv文件个数
 
-mat_new_ct = cell(8,2);
-SR = zeros(Q,2);
-break_rate = zeros(Q,2);
-MT_aver = zeros(Q,2);
-TP = zeros(Q,2);
+mat_new_ct = cell(8,4);
+SR = zeros(Q,4);
+break_rate = zeros(Q,4);
+MT_aver = zeros(Q,4);
+TP = zeros(Q,4);
+TP_correction = zeros(Q,4);
 datasave1 = zeros(Q,4);
 datasave2 = zeros(Q,4);
 %%  
 for g = 1:G
     
-    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/grip_force_control_task/S1_all_data/outcome_data/model_',num2str(g)]));  
+    cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/grip_force_control_task/S3_all_data/outcome_data/model_',num2str(g)]));  %single_finger_force_control_task  grip_force_control_task
     
     for q = 1:Q
 
-        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/grip_force_control_task/S1_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_test',num2str(q)]));
+        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/grip_force_control_task/S3_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_test',num2str(q)]));
         %     files = dir([foldername '\*.csv']);                                      
         
         %% 读取力的大小值
-        filename1 = 'D:/Luoqi/fitts_law/ID_6_grip_force_Fmin_Fmax.csv';   %%% ID_6_single_finger_force_Fmin_Fmax
+        filename1 = 'D:/Luoqi/fitts_law/ID_6_grip_force_Fmin_Fmax.csv';   %%% ID_6_single_finger_force_Fmin_Fmax       ID_6_grip_force_Fmin_Fmax.csv
         file = csvread(filename1,1,0);
         fmin = file(1:level,4);
         fmax = file(1:level,5);
@@ -107,13 +108,13 @@ for g = 1:G
             set(gca,'FontSize',16);%只能同时改变x y轴显示的字体大小；
             set(get(gca,'YLabel'),'Fontsize',19);% 是针对标注的而不是坐标刻度
             set(get(gca,'XLabel'),'Fontsize',19);% 是针对标注的而不是坐标刻度
-            h_i=legend ( 'Grip force', 'Fmax',' Fmin', 'Location' ,'SouthEast');  %Grip force  Pressure
+            h_i=legend ( 'Force', 'Fmax',' Fmin', 'Location' ,'SouthEast');  %Grip force  Pressure
             set(h_i,'Box','off');
             % 保存图片到当前目录
-            mm=sprintf('task_%d.png',k);
-            nn=sprintf('task_%d.eps',k);
-            saveas(figure(k),mm);
-            saveas(figure(k),nn);      
+            fmm=sprintf('task_%d.png',k);
+            fnn=sprintf('task_%d.eps',k);
+            saveas(figure(k),fmm);
+            saveas(figure(k),fnn);      
             
         end
         
@@ -139,8 +140,8 @@ for g = 1:G
           MT_aver(q,g) = sum(movement_time)/(6-fail_nu);       
           
         %% 计算throughput(TP): TP= (ID1/CT1 + ID2/CT2 +...+ IDi/CTi )/N
-         TP(q,g)=sum(ID./completion_time)/(6-fail_nu);
-         
+         TP(q,g)=sum(ID./completion_time)/(6-fail_nu); 
+         TP_correction(q,g) = SR(q,g)*TP(q,g);
        %%
           mat_new_ct{q,g}(:,4)= movement_time;
           mat_new_ct{q,g}(:,3)= completion_time;   
@@ -148,32 +149,40 @@ for g = 1:G
           mat_new_ct{q,g}(:,1)= ID_number;
           %aaaaa=sum(completion_time == 0);  aaaaa=find(completion_time == 0);        
           
-%           csvwrite('S2_para2_1_',num2str(q),'.csv',mat_new_ct{q,1});
-%           csvwrite('S2_para2_2_',num2str(q),'.csv',mat_new_ct{q,2});
-%           csvwrite('S2_para2_1.csv',mat_new_ct{q,1});
-%           csvwrite('S2_para2_2.csv',mat_new_ct{q,2});   
-%      csvwrite('S2_para2_1.csv',mat_new_ct{q,1},((q-1)*6+1):((q-1)*6+6),0);
-%      csvwrite('S2_para2_2.csv',mat_new_ct{q,2},((q-1)*6+1):((q-1)*6+6),0); 
+%           csvwrite('S3_para2_1_',num2str(q),'.csv',mat_new_ct{q,1});
+%           csvwrite('S3_para2_2_',num2str(q),'.csv',mat_new_ct{q,2});
+%           csvwrite('S3_para2_1.csv',mat_new_ct{q,1});
+%           csvwrite('S3_para2_2.csv',mat_new_ct{q,2});   
+%      csvwrite('S3_para2_1.csv',mat_new_ct{q,1},((q-1)*6+1):((q-1)*6+6),0);  %csvwrite不接受输入矩阵M的元胞数组。要导出仅包含数值数据的元胞数组，在调用 csvwrite 之前使用 cell2mat 将元胞数组转换为数值矩阵
+%      csvwrite('S3_para2_2.csv',mat_new_ct{q,2},((q-1)*6+1):((q-1)*6+6),0); 
 
     end      
             
 end   
 %%   Data Save
-cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\full_model_fitts\grip_force_control_task\S1_all_data\outcome_data');
+cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\full_model_fitts\grip_force_control_task\S3_all_data\outcome_data');  %single_finger_force_control_task   grip_force_control_task
         [row,col]=size(mat_new_ct);
         filename1='mode1.csv';%.csv可以更改为.txt等
         filename2='mode2.csv';
+        filename3='mode3.csv';
+        filename4='mode4.csv';
         fid1=fopen(filename1,'w');
         fid2=fopen(filename2,'w');
+        fid3=fopen(filename3,'w');
+        fid4=fopen(filename4,'w');
         count=0;
         for index=1:row
             bbx1=mat_new_ct{index,1};
             bbx2=mat_new_ct{index,2};
+            bbx3=mat_new_ct{index,3};
+            bbx4=mat_new_ct{index,4};
             [a,b]=size(bbx1);
             for i=1:a
                 count=count+1;
                 fprintf(fid1,'%f,%f,%f, %f ,%f\n',count,bbx1(i,:));
                 fprintf(fid2,'%f,%f,%f, %f ,%f\n',count,bbx2(i,:));
+                fprintf(fid3,'%f,%f,%f, %f ,%f\n',count,bbx3(i,:));
+                fprintf(fid4,'%f,%f,%f, %f ,%f\n',count,bbx4(i,:));
             end
         end
 
@@ -183,5 +192,5 @@ cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\full_model_fitts\grip_force_con
 %     celldata = [numcell;str1];
 %     cell2csv('testdata.csv',celldata)
 %%  结果保存为.mat文件
-save(['S1_grip_fitts_data.mat']);    % S1_single_finger_fitts_data
+save('S3_grip_fitts_data.mat');    % S3_single_finger_fitts_data    S3_grip_fitts_data
 %cd \
