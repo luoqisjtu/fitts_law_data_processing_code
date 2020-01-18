@@ -1,0 +1,25 @@
+x = 0:0.0001:10;
+a1 = 3;
+a2 = 5;
+a3 = 10;
+a4 = 35;
+pram = 4; 
+y1 = 2 * gaussmf((x*5)+a1/50,[a1/pram 5]);
+y2 = 2 * gaussmf(x*5+a2/50,[a2/pram 5]);
+y3 = 2 * gaussmf(x*5+a3/50,[a3/pram 5]);
+y4 = 2 * gaussmf(x*5+a4/50,[a4/pram 5]);
+figure();
+plot(x,y1,'r');
+xlim([0 1]);
+hold on;
+plot(x,y2,'g');
+xlim([0 1]);
+hold on;
+plot(x,y3,'b');
+xlim([0 1]);
+hold on;
+plot(x,y4,'k');
+xlim([0 1]);
+legend('aerfa = 3','aerfa = 5','aerfa = 10','aerfa = 35')
+xlabel('length mtu');
+ylabel('tension');

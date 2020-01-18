@@ -5,10 +5,10 @@ clear; clc;                                                                     
 %%
 cd D:\Luoqi\fitts_law\local_fitts_law_data_processing_code\data_analysis;
 %%
-g = 1; %model 1 2 3 4
-Q = 8;%test÷ÿ∏¥¥Œ ˝ 
+g = 2; %model 1 2 3 4
+Q = 6;%test÷ÿ∏¥¥Œ ˝ 
 level = 6;   % …Ë÷√IDµ»º∂µƒ ˝¡ø     √ø∏ˆtestŒƒº˛º–¿ÔµƒcsvŒƒº˛∏ˆ ˝ 
-resa_num = 300;%÷ÿ≤…—˘∫Û ˝æ›µ„ ˝ 200
+resa_num = 500;%÷ÿ≤…—˘∫Û ˝æ›µ„ ˝ 
 mat_new_ct = cell(8,4);
 mat_new_pv = cell(8,6);
 mat_new_pv_re = cell(8,6);
@@ -25,18 +25,15 @@ completion_time_nonfail = zeros(Q,level);
 force_sm_std = zeros(Q,level);
 force_sm_std_aver = zeros(1,level);
 force_sm_std_err = zeros(1,level);
-force_rms_diff1 = zeros(Q,level);           
-force_rms_diff1_aver = zeros(1,level);
-force_rms_diff1_err = zeros(1,level);
 force_rms_diff3 = zeros(Q,level);           
 force_rms_diff3_aver = zeros(1,level);
 force_rms_diff3_err = zeros(1,level);
 RMSE_force = zeros(Q,level);
 RMSE_force_aver = zeros(1,level);
 RMSE_force_err = zeros(1,level);
-RMSE_force_hand = zeros(Q,level);
-RMSE_force_hand_aver = zeros(1,level);
-RMSE_force_hand_err = zeros(1,level);
+RMSE_force_sigmoid = zeros(Q,level);
+RMSE_force_sigmoid_aver = zeros(1,level);
+RMSE_force_sigmoid_err = zeros(1,level);
 Rcor_force = zeros(Q,level);
 Rcor_force_aver = zeros(1,level);
 Rcor_force_err = zeros(1,level);
@@ -53,25 +50,16 @@ datasave1 = zeros(Q,4);
 datasave2 = zeros(Q,4);
 color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…´æÿ’Û
 %%  
-% for g = 1:G
-   
-%     cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/grip_force_control_task/S6_all_data/outcome_data/model_',num2str(g)]));  
      
     for q = 1:Q
-        
-        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/single_finger_force_control_task/S6_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_test',num2str(q)]));  %single_finger_force_control_task   grip_force_control_task                            
-
+                               
+        cd(strcat(['D:/Luoqi/fitts_law/fitts_all_result_analysis/pilot_model_fitts/S5_all_data/outcome_data/model_',num2str(g),'/model',num2str(g),'_ba_test_',num2str(q)]));   %JNE£°£°£°
         %% ∂¡»°ƒø±Í¡¶µƒ¥Û–°÷µ
-        filename1 = 'D:/Luoqi/fitts_law/ID_6_single_finger_force_Fmin_Fmax_order.csv';   %%% ID_6_single_finger_force_Fmin_Fmax    ID_6_grip_force_Fmin_Fmax
+        filename1 = 'D:/Luoqi/fitts_law/ID_6_single_finger_force_Fmin_Fmax.csv';   %%% ID_6_single_finger_force_Fmin_Fmax    ID_6_grip_force_Fmin_Fmax
         file1 = csvread(filename1,1,0);
         fmin = file1(1:level,4);
         fmax = file1(1:level,5);
         
-        if(g ~= 4)
-        %% ∂¡»°≤Œøº—π¡¶(model4-human hand)
-        filename2 = 'D:/Luoqi/fitts_law/fitts_all_result_analysis/full_model_fitts/single_finger_force_control_task/S6_all_data/outcome_data/force_ref_model4.csv';  %single_finger_force_control_task   grip_force_control_task
-        file2 = csvread(filename2,0,0);
-        end  
         
         %%
         ID_number=zeros(level,1);
@@ -79,9 +67,8 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
         completion_time=zeros(level,1); %
         completion_time_re=zeros(level,1);
         movement_time=zeros(level,1);
-        collision_p=zeros(level,1);        
-%         IDs =[5.17;4.37;3.59;5.95;4.17;4.95];   %531624  µ±‘⁄ µ—È…Ë÷√÷–∏ƒ±‰≤ªÕ¨IDµƒtaskÀ≥–Ú ±£¨¥À¥¶“≤“™œ‡”¶µ˜’˚À≥–Ú£°£°£°£°£°£°   œ¬¥Œ µ—È∏ƒŒ™IDs =[4.37;5.17;3.59;5.95;4.17;4.95];
-        IDs =[4.37;5.17;3.59;5.95;4.17;4.95];    %351624_order
+        collision_p=zeros(level,1);             
+        IDs =[5.17;4.37;3.59;4.95;4.17;5.95];  %JNE£°£°£° 531426  µ±‘⁄ µ—È…Ë÷√÷–∏ƒ±‰≤ªÕ¨IDµƒtaskÀ≥–Ú ±£¨¥À¥¶“≤“™œ‡”¶µ˜’˚À≥–Ú£°£°£°£°£°£°
         
         for k=1:level
                
@@ -97,9 +84,9 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             t_ = 0: 0.01:max_t;
             t = t_';
             
-            Data_force = abs(force_val(1:(length(force_val)-500),2)); %”––ß—π¡¶ ˝æ›°™»•µÙ◊Ó∫Ûµƒ5sµƒ ˝æ›£¨“≤æÕ «500∏ˆ ˝    %∏˘æ›unity÷–…Ë÷√µƒ—” ± ±º‰µ˜’˚ ±£¨¥À¥¶“≤“™œ‡”¶µ˜’˚À≥–Ú£°£°£°£°£°£°   
+            Data_force = abs(force_val(1:(length(force_val)-300),2)); %”––ß—π¡¶ ˝æ›°™»•µÙ◊Ó∫Ûµƒ5sµƒ ˝æ›£¨“≤æÕ «300∏ˆ ˝  % 3s  300     %∏˘æ›unity÷–…Ë÷√µƒ—” ± ±º‰µ˜’˚ ±£¨¥À¥¶“≤“™œ‡”¶µ˜’˚À≥–Ú£°£°£°£°£°£°   
             mat_new_pv{q,k} = Data_force; %force_val(:,2)
-                  
+            
             %Õ≥º∆¡¶Ãı…œ…˝µƒ ±º‰£¨¥”¡¶Ãıø™ º“∆∂Øµƒ ±º‰À„∆ %%%%∆ ºµƒ—π¡¶÷µ∏˘æ› µº µƒ«Èøˆø…“‘µ˜’˚
             for m=1:length(force_val(:,2))
                 if(force_val(m,2)>0.1)
@@ -107,14 +94,10 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
                     break;
                 end
             end
-            
-            force_mm = Data_force(m:end,1)-0.001;  
-            mat_new_pv_re{q,k} = force_mm;  
-            
  %%           
             ID_number(k)=k;
-            completion_time(k)=t(length(t)-500)-t(start_time);            
-            completion_time_re(k)=t(length(t)-500);      %0.2s-‘⁄unity÷–…Ë÷√£¨ƒø±Í≥ˆœ÷0.2s∫Û£¨taskø™ º     completion_time_re(k)=t(length(t)-500)-0.2; 
+            completion_time(k)=t(length(t)-300)-t(start_time);            
+            completion_time_re(k)=t(length(t)-300);      %0.2s-‘⁄unity÷–…Ë÷√£¨ƒø±Í≥ˆœ÷0.2s∫Û£¨taskø™ º     completion_time_re(k)=t(length(t)-300)-0.2; 
             movement_time(k) = completion_time_re(k)-completion_time(k);
             
             %Õ≥º∆√ø◊Ètask≈ˆµΩΩ˚÷π«¯”Úµƒ¥Œ ˝(0-√ª”–≈ˆµΩ£¨1-≈ˆµΩ)
@@ -122,7 +105,8 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             collision_p(k) = sum(collision == 1);
             cp_t = sum(collision_p~=0);   %≈ˆµΩΩ˚÷π«¯”Ú¥Œ ˝      
                        
-            if(completion_time_re(k)>14.8||collision_p(k)~=0||movement_time(k)<=0)            %%t>14.8ªÚ≈ˆµΩΩ˚÷π«¯”ÚªÚ√ª”–¥”∆ ºŒª÷√≥ˆ∑¢∂‘”¶µƒtrialº«Œ™fail  
+            if(completion_time_re(k)>13||collision_p(k)~=0||movement_time(k)<=0)            %%t>13ªÚ≈ˆµΩΩ˚÷π«¯”ÚªÚ√ª”–¥”∆ ºŒª÷√≥ˆ∑¢∂‘”¶µƒtrialº«Œ™fail  
+%             if(completion_time_re(k)>=14.8||collision_p(k)~=0||movement_time(k)<=0)
                   completion_time(k)=0;  %completion_time(k)=[];
 %                   ID_number(k)=0;
                   ID(k)=0;
@@ -137,38 +121,19 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
            CT_aver(1,k)=sum(completion_time_ct(:,k))/(q-fail_nu(1,k));            %∞—failed trial»•µÙ∫Ûº∆À„∆Ωæ˘÷µ
 
 %            completion_time_nonfail(:,k) = completion_time_ct(:,k)(completion_time_ct(:,k)~=0);  %a(a==0) = []; a(find(a==0)) = [];  b = a(a ~= 0);  b = a(find(a ~= 0));
- %% º∆À„—π¡¶«˙œﬂ∆Ωª¨∂»£®π‚ª¨∂»smoothness£© 
- 
-            force_smoo = resample(force_mm,resa_num,length(force_mm)); 
-            force_diff1 = diff(force_smoo); %«Û“ªΩ◊µº(“ªΩ◊≤Ó∑÷)
-            force_diff3 = diff(force_smoo,3); %the rate of change of acceleration
+ %% º∆À„—π¡¶«˙œﬂ∆Ωª¨∂»£®π‚ª¨∂»smoothness£©°™°™«Û¿Î…¢«˙œﬂ»˝Ω◊µº ˝µƒæ˘÷µ           
+            force_diff3 = diff(Data_force,3); %«Û»˝Ω◊µº(»˝Ω◊≤Ó∑÷)
             
-%             force_diffaver(q,k)=mean(force_diff);   %√øÃı«˙œﬂµƒ“ªΩ◊µº ˝æ˘÷µ
-%             force_diffaver_re(k) = mean(force_diffaver(:,k));
+            force_diffaver(q,k)=mean(force_diff3);   %√øÃı«˙œﬂµƒ»˝Ω◊µº ˝æ˘÷µ
+            force_diffaver_re(k) = mean(force_diffaver(:,k));
             
        %===================================================================================           
-            force_rms_diff1(q,k) = rms(force_diff1);       
-
-            if(force_rms_diff1(q,k)>2)  %°™°™°™°™°™°™°™°™»•µÙ¡Ω∏ˆ“Ï≥£÷µ(model1)
-                force_rms_diff1(q,k) = 0;                          
-                force_rms_diff1_aver(k) = sum(force_rms_diff1(:,k))/(Q-1);
-            else
-                force_rms_diff1_aver(k) = mean(force_rms_diff1(:,k));  
-            end 
-            
-            force_rms_diff1_err(k) = std(force_rms_diff1(:,k));               
-            force_rms_diff1_row(((q-1)*level+1):((q-1)*level+level),1) = IDs(:,1);
-            force_rms_diff1_row(((q-1)*level+1):((q-1)*level+level),2) = force_rms_diff1(q,:);
-            csvwrite(['Force_rms_diff1_model',num2str(g),'.csv'],force_rms_diff1_row,0,0); 
-            
-            
             force_rms_diff3(q,k) = rms(force_diff3);       
             force_rms_diff3_aver(k) = mean(force_rms_diff3(:,k));        
             force_rms_diff3_err(k) = std(force_rms_diff3(:,k));         
             force_rms_diff3_row(((q-1)*level+1):((q-1)*level+level),1) = IDs(:,1);
             force_rms_diff3_row(((q-1)*level+1):((q-1)*level+level),2) = force_rms_diff3(q,:);
             csvwrite(['Force_rms_diff3_model',num2str(g),'.csv'],force_rms_diff3_row,0,0); 
-            
        %===================================================================================
 %             force_sm_std(q,k) = std(force_diff);  %√øÃı«˙œﬂ“ªΩ◊µº ˝µƒ±Í◊º≤Óstandard deviation
 %             
@@ -186,7 +151,7 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
 %             csvwrite(['Force_std_smoothness_model',num2str(g),'.csv'],force_sm_std_row,0,0); 
             
 %% Ïÿ÷µ∑®°™°™«Û—π¡¶Ïÿentropy
-            force_entropy(q,k) = entropy(force_mm);
+            force_entropy(q,k) = entropy(Data_force);
             force_entropy_aver(k) = mean(force_entropy(:,k));
             force_entropy_err(k) = std(force_entropy(:,k));
             
@@ -255,22 +220,25 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             
 %% ªÊ÷∆—π¡¶«˙œﬂ°™°™force curve        
             figure(k),    %√ø∏ˆID“ª∏ˆfigure
-%             plot(t(1:length(t)-500)-t(m)+2,Data_force-0.002,'linewidth',1.5,'color',color(q,:)); hold on;    % “‘—π¡¶¥Û”⁄¡„ ±øÃŒ™ª˘◊ºµ„£¨∂‘∆Î—π¡¶«˙œﬂ∆ ºµ„ 
+%             plot(t(1:length(t)-300)-t(m)+2,Data_force-0.002,'linewidth',1.5,'color',color(q,:)); hold on;    % “‘—π¡¶¥Û”⁄¡„ ±øÃŒ™ª˘◊ºµ„£¨∂‘∆Î—π¡¶«˙œﬂ∆ ºµ„ 
 
 %             if(completion_time_re(k)>=14.8||collision_p(k)~=0||movement_time(k)<=0)
-%                  plot(t(1:length(t)-500),Data_force-0.002,'linewidth',1.5,'color',[1,0,0]); hold on;   %“‘√ø∏ˆtrial ±º‰∆ ºµ„ªÊÕº£¨≤ª∂‘∆Î—π¡¶«˙œﬂ∆ ºµ„
+%                  plot(t(1:length(t)-300),Data_force-0.002,'linewidth',1.5,'color',[1,0,0]); hold on;   %“‘√ø∏ˆtrial ±º‰∆ ºµ„ªÊÕº£¨≤ª∂‘∆Î—π¡¶«˙œﬂ∆ ºµ„
 %             else
-%                  plot(t(1:length(t)-500),Data_force-0.002,'linewidth',1.5,'color',[0,0,1]); hold on;
+%                  plot(t(1:length(t)-300),Data_force-0.002,'linewidth',1.5,'color',[0,0,1]); hold on;
 %             end
-                        
             
-            if(completion_time_re(k)>=14.8||collision_p(k)~=0||movement_time(k)<=0) 
-                plot(0:1/(length(force_mm)-1):1,force_mm,'linewidth',1.5,'color',[1,0,0]); hold on; %∫·◊¯±Í ±º‰πÈ“ªªØµΩ(0,1)
+            force_mm = Data_force(m:end,1)-0.001;  
+            mat_new_pv_re{q,k} = force_mm;            
+            
+            if(completion_time_re(k)>=13||collision_p(k)~=0||movement_time(k)<=0) %14.8
+                plot(0:1/(length(Data_force)-m):1,force_mm,'linewidth',1.5,'color',[1,0,0]); hold on; %∫·◊¯±Í ±º‰πÈ“ªªØµΩ(0,1)
             else
-                plot(0:1/(length(force_mm)-1):1,force_mm,'linewidth',1.5,'color',[0,0,1]); hold on;  %∫·◊¯±Í ±º‰πÈ“ªªØµΩ(0,1)  
+                plot(0:1/(length(Data_force)-m):1,force_mm,'linewidth',1.5,'color',[0,0,1]); hold on;  %∫·◊¯±Í ±º‰πÈ“ªªØµΩ(0,1)  
             end   
             
-          %=======================================================================================================
+          %========================================================================================
+          
           % ÷ÿ≤…—˘≤Â÷µ°™°™“‘√ø÷÷modelœ¬œ‡∂‘”¶µƒID—π¡¶«˙œﬂµƒæ˘÷µŒ™≤Œøº°™°™”ÎÕ¨“ªƒ£ Ωœ¬æ˘÷µ±»£¨evaluateŒ»∂®–‘     
            force_mm_resa = resample(force_mm,resa_num,length(force_mm));    
            mat_new_pv_resa{q,k} = force_mm_resa;
@@ -279,51 +247,40 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             
            force_ref = force_mm_resa_aver(:,k);
            force_ref_resa = resample(force_ref,length(force_mm),length(force_ref));  
-               
-               
-          % ÷ÿ≤…—˘≤Â÷µ°™°™“‘Ω°≤‡ ÷—π¡¶«˙œﬂŒ™≤Œøº°™°™”ÎΩ°≤‡ ÷±»     
-          if(g==4)   
-               force_ref_resa_hand = force_ref_resa;     
-          else  
-               force_ref_hand = file2(:,k);
-               force_ref_resa_hand = resample(force_ref_hand,length(force_mm),length(force_ref_hand));
-           end     
-                        
-           time_norm = 0:1/(length(force_mm)-1):1;%linspace(0,1)  
-           plot(time_norm, force_ref_resa_hand, 'Color', 'k', 'LineWidth', 2);hold on;
-         %===========================================================================================================
+
+         %======================================================================================
                        
            % sigmoid«˙œﬂ °™°™“‘sigmoidƒ‚∫œ«˙œﬂŒ™≤Œøº          
-% %             force_target = (fmin + fmax)/2;
-% %             time_norm = 0:1/(length(Data_force)-m):1;%linspace(0,1)   
-% %                        
-% %             c =0.3;a=15;  %5 10 15 18 20 25  %0.8 0.5 0.3 0.25 0.2 0.1   cftool fminsearch  fmincon  
-% %             force_sigmoid = 1./(1 + exp(-a.*(time_norm - c))); %sigmoid
-% % %             force_sigmoid = a*exp(b*x) + exp(d*x);
-% %             
-% % %             if(k==1)
-% % %                  force_sigmoid = 2.629*exp(0.3396*time_norm) - 2.671*exp(-44.49*time_norm);
-% % %             elseif(k==2)  
-% % %                  force_sigmoid = 4.114*exp(0.3339*time_norm) - 4.311*exp(-21.88*time_norm);
-% % %             elseif(k==3) 
-% % %                  force_sigmoid = 3.938*exp(-0.1727*time_norm) - 4.18*exp(-13.57*time_norm);
-% % %             elseif(k==4) 
-% % %                  force_sigmoid = 5.293*exp(0.1298*time_norm) - 5.313*exp(-17.48*time_norm);
-% % %             elseif(k==5) 
-% % %                  force_sigmoid = 3.806*exp(-0.01416*time_norm) - 3.897*exp(-12.33*time_norm);
-% % %             elseif(k==6) 
-% % %                  force_sigmoid = 5.25*exp(0.08526*time_norm) - 5.251*exp(-11.03*time_norm);
-% % %             end   
-% % %             
-% % %             plot(time_norm, force_sigmoid, 'Color', 'k', 'LineWidth', 2);hold on;
-% %             plot(time_norm, force_target(k,:)*force_sigmoid, 'Color', 'k', 'LineWidth', 2);hold on;
+            force_target = (fmin + fmax)/2;
+            time_norm = 0:1/(length(Data_force)-m):1;%linspace(0,1)   
+                       
+            c =0.3;a=15;  %5 10 15 18 20 25  %0.8 0.5 0.3 0.25 0.2 0.1   cftool fminsearch  fmincon  
+            force_sigmoid = 1./(1 + exp(-a.*(time_norm - c))); %sigmoid
+%             force_sigmoid = a*exp(b*x) + exp(d*x);
+            
+%             if(k==1)
+%                  force_sigmoid = 2.629*exp(0.3396*time_norm) - 2.671*exp(-44.49*time_norm);
+%             elseif(k==2)  
+%                  force_sigmoid = 4.114*exp(0.3339*time_norm) - 4.311*exp(-21.88*time_norm);
+%             elseif(k==3) 
+%                  force_sigmoid = 3.938*exp(-0.1727*time_norm) - 4.18*exp(-13.57*time_norm);
+%             elseif(k==4) 
+%                  force_sigmoid = 5.293*exp(0.1298*time_norm) - 5.313*exp(-17.48*time_norm);
+%             elseif(k==5) 
+%                  force_sigmoid = 3.806*exp(-0.01416*time_norm) - 3.897*exp(-12.33*time_norm);
+%             elseif(k==6) 
+%                  force_sigmoid = 5.25*exp(0.08526*time_norm) - 5.251*exp(-11.03*time_norm);
+%             end   
+%             
+%             plot(time_norm, force_sigmoid, 'Color', 'k', 'LineWidth', 2);hold on;
+            plot(time_norm, force_target(k,:)*force_sigmoid', 'Color', 'k', 'LineWidth', 2);hold on;
            %========================================================================================
                                 
             xlim=get(gca,'Xlim'); % ªÒ»°µ±«∞Õº–Œµƒ∫·÷·µƒ∑∂Œß      
             a=plot(xlim,[fmax(k)-0.002,fmax(k)-0.002],'--','linewidth',1.5,'color',[1,0,0]);hold on
             b=plot(xlim,[fmin(k)-0.002,fmin(k)-0.002],'--','linewidth',1.5,'color',[0,1,0]); hold on
             
-            pressure = force_mm;
+            pressure = Data_force(m:end,1); %force_val(m:length(force_val)-300,2)
             if max(pressure)>=fmax(k)
                 y_max=max(pressure);
             else
@@ -331,7 +288,7 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             end         
             
 %           axis([0 max_t-5 0 y_max+7]);
-            axis([0 1 0 10]); %12
+            axis([0 1 0 6]); %12
             xlabel('Normalized time');
             ylabel('Fingertip force(N)');     %Grip force(N)  Pressure  Fingertip force
             title(['ID =',num2str(k)]);
@@ -346,26 +303,24 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
 %             saveas(figure(k),fm_m);
 %             saveas(figure(k),fn_n);         
 
-%% «Û—π¡¶«˙œﬂœ‡∂‘”⁄reference«˙œﬂµƒæ˘∑Ω∏˘ŒÛ≤ÓRoot Mean Squared Error   
-
+%% «Û—π¡¶«˙œﬂœ‡∂‘”⁄sigmoid«˙œﬂµƒæ˘∑Ω∏˘ŒÛ≤ÓRoot Mean Squared Error    
          %=====================================================================œ‡∂‘”⁄Ω°≤‡ ÷µƒRMSE
-            numel_force = length(force_mm)-1;
-%             RMSE_force_hand(q,k) = sqrt(sum((force_mm-force_target(k,:)*force_sigmoid').^2)/numel_force);   
-            RMSE_force_hand(q,k) = sqrt(sum((force_mm-force_ref_resa_hand).^2)/numel_force); 
+            numel_force = length(Data_force)-m;
+            RMSE_force_sigmoid(q,k) = sqrt(sum((force_mm-force_target(k,:)*force_sigmoid').^2)/numel_force);   
             
-            if(RMSE_force_hand(q,k)>90)  %°™°™°™°™°™°™°™°™»•µÙ“Ï≥£÷µ
-                RMSE_force_hand(q,k) = 0;                          
-                RMSE_force_hand_aver(k) = sum(RMSE_force_hand(:,k))/(Q-1);
+            if(RMSE_force_sigmoid(q,k)>90)  %°™°™°™°™°™°™°™°™»•µÙ“Ï≥£÷µ
+                RMSE_force_sigmoid(q,k) = 0;                          
+                RMSE_force_sigmoid_aver(k) = sum(RMSE_force_sigmoid(:,k))/(Q-1);
             else
-                RMSE_force_hand_aver(k) = mean(RMSE_force_hand(:,k));  
+                RMSE_force_sigmoid_aver(k) = mean(RMSE_force_sigmoid(:,k));  
             end           
             
-            RMSE_force_hand_err(k) = std(RMSE_force_hand(:,k));    %SD
-%             RMSE_force_hand_err(k) = std(RMSE_force_hand(:,k))/sqrt(length(RMSE_force_hand(:,k)));  %SE
+            RMSE_force_sigmoid_err(k) = std(RMSE_force_sigmoid(:,k));    %SD
+%             RMSE_force_sigmoid_err(k) = std(RMSE_force_sigmoid(:,k))/sqrt(length(RMSE_force_sigmoid(:,k)));  %SE
             
-            RMSE_force_hand_row(((q-1)*level+1):((q-1)*level+level),1) = IDs(:,1);
-            RMSE_force_hand_row(((q-1)*level+1):((q-1)*level+level),1) = RMSE_force_hand(q,:);              
-            csvwrite(['Force_ref_hand_RMSE_model',num2str(g),'.csv'],RMSE_force_hand_row,0,0); 
+            RMSE_force_sigmoid_row(((q-1)*level+1):((q-1)*level+level),1) = IDs(:,1);
+            RMSE_force_sigmoid_row(((q-1)*level+1):((q-1)*level+level),1) = RMSE_force_sigmoid(q,:);              
+            csvwrite(['Force_ref_sigmoid_RMSE_model',num2str(g),'.csv'],RMSE_force_sigmoid_row,0,0); 
             
          %=====================================================================œ‡∂‘”⁄◊‘…Ìmodelæ˘÷µµƒRMSE
             RMSE_force(q,k) = sqrt(sum((force_mm-force_ref_resa).^2)/numel_force);      
@@ -374,13 +329,11 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             RMSE_force_row(((q-1)*level+1):((q-1)*level+level),1) = IDs(:,1);
             RMSE_force_row(((q-1)*level+1):((q-1)*level+level),1) = RMSE_force(q,:);              
             csvwrite(['Force_ref_controller_RMSE_model',num2str(g),'.csv'],RMSE_force_row,0,0); 
-
             
 %% «Û—π¡¶«˙œﬂforce curve”Îreference curveµƒœ‡À∆–‘similarity      
 
         %================================================================«Û¡Ω◊ÈœÚ¡øµƒœﬂ–‘œ‡πÿ–‘
-%             Rcor_force_mat = corrcoef(force_mm,force_target(k,:)*force_sigmoid'); %◊¢“‚––¡–œÚ¡ø◊™ªª   
-            Rcor_force_mat = corrcoef(force_mm,force_ref_resa_hand);    %«Û¡Ω◊ÈœÚ¡øµƒœﬂ–‘œ‡πÿ–‘
+            Rcor_force_mat = corrcoef(force_mm,force_target(k,:)*force_sigmoid');  %«Û¡Ω◊ÈœÚ¡øµƒœﬂ–‘œ‡πÿ–‘
             Rcor_force(q,k) = Rcor_force_mat(1,2);
             Rcor_force_aver(k) = mean(Rcor_force(:,k));
             Rcor_force_err(k) = std(Rcor_force(:,k));          
@@ -389,15 +342,12 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
             csvwrite(['Force_corrcoef_model',num2str(g),'.csv'],Rcor_force_row,0,0); 
                                                 
          %================================================================«Ûº–Ω«”‡œ“-∂»¡ø¡Ω◊ÈœÚ¡ø÷Æº‰º–Ω«µƒ¥Û–°
-            Sim_force(q,k) = dot(force_mm,force_ref_resa_hand)/(norm(force_mm)*norm(force_ref_resa_hand)); %«Ûº–Ω«”‡œ“-∂»¡ø¡Ω◊ÈœÚ¡ø÷Æº‰º–Ω«µƒ¥Û–°   sim(x,y)=cos(x,y)
+            Sim_force(q,k) = dot(force_mm,force_sigmoid')/(norm(force_mm)*norm(force_sigmoid')); %«Ûº–Ω«”‡œ“-∂»¡ø¡Ω◊ÈœÚ¡ø÷Æº‰º–Ω«µƒ¥Û–°   sim(x,y)=cos(x,y)
             Sim_force_aver(k) = mean(Sim_force(:,k));
             Sim_force_err(k) = std(Sim_force(:,k));    
             Sim_force_row(((q-1)*level+1):((q-1)*level+level),1) = IDs(:,1);
             Sim_force_row(((q-1)*level+1):((q-1)*level+level),1) = Sim_force(q,:);              
-            csvwrite(['Force_similarity_model',num2str(g),'.csv'],Sim_force_row,0,0);        
-         
-            
-            
+            csvwrite(['Force_similarity_model',num2str(g),'.csv'],Sim_force_row,0,0);     
         end
         
           mat_new_ct{q,g}(:,4)= movement_time;
@@ -410,19 +360,19 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
 %% ªÊ÷∆force smoothness”ÎIDµƒ«˙œﬂ
         figure(level+1),
 %         plot(IDs(1:level),force_sm_std_aver,'o','color',[1,0,0]);hold on;
-        errorbar(IDs(1:level),force_rms_diff1_aver,force_rms_diff1_err,'*r','LineWidth',1','MarkerSize',8);hold on;    %force_sm_std_aver
-        plot([IDs(3);IDs(5)],[force_rms_diff1_aver(3);force_rms_diff1_aver(5)],'r');hold on;
-        plot([IDs(5);IDs(2)],[force_rms_diff1_aver(5);force_rms_diff1_aver(2)],'r');hold on;
-        plot([IDs(2);IDs(6)],[force_rms_diff1_aver(2);force_rms_diff1_aver(6)],'r');hold on;
-        plot([IDs(6);IDs(1)],[force_rms_diff1_aver(6);force_rms_diff1_aver(1)],'r');hold on;
-        plot([IDs(1);IDs(4)],[force_rms_diff1_aver(1);force_rms_diff1_aver(4)],'r');hold on;
+        errorbar(IDs(1:level),force_rms_diff3_aver,force_rms_diff3_err,'*r','LineWidth',1','MarkerSize',8);hold on;    %force_sm_std_aver
+        plot([IDs(3);IDs(5)],[force_rms_diff3_aver(3);force_rms_diff3_aver(5)],'r');hold on;
+        plot([IDs(5);IDs(2)],[force_rms_diff3_aver(5);force_rms_diff3_aver(2)],'r');hold on;
+        plot([IDs(2);IDs(6)],[force_rms_diff3_aver(2);force_rms_diff3_aver(6)],'r');hold on;
+        plot([IDs(6);IDs(1)],[force_rms_diff3_aver(6);force_rms_diff3_aver(1)],'r');hold on;
+        plot([IDs(1);IDs(4)],[force_rms_diff3_aver(1);force_rms_diff3_aver(4)],'r');hold on;
         xlabel('ID');
         ylabel('Roughness of force');
         title('Force roughness °™ ID');
         hhh_i=legend ('Model',num2str(g),'Location','NorthEast');
         set(hhh_i,'Box','off');
         axis([3.5 6 0 0.3]);
-%         fs_eps=sprintf(['Force_smoothness_model',num2str(g),'.epsc']);
+        fs_eps=sprintf(['Force_smoothness_model',num2str(g),'.epsc']);
 %         saveas(figure(level+1),fs_eps);    
 %% ªÊ÷∆force corrcoef”ÎIDµƒ«˙œﬂ
         figure(level+2),
@@ -438,7 +388,7 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
         hhh_i=legend ('Model',num2str(g),'Location','NorthEast');  %Pilot
         set(hhh_i,'Box','off');
         axis([3.5 6 -1 1.5]);
-%         fc_eps=sprintf(['Force_corrcoef_model',num2str(g),'.epsc']);
+        fc_eps=sprintf(['Force_corrcoef_model',num2str(g),'.epsc']);
 %         saveas(figure(level+2),fc_eps);  
 %% ªÊ÷∆force RMSE”ÎIDµƒ«˙œﬂ
         figure(level+3),
@@ -454,7 +404,7 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
         hhh_i=legend ('Model',num2str(g),'Location','NorthEast');  %Pilot
         set(hhh_i,'Box','off');
         axis([3.5 6 0 6]);
-%         fr_eps=sprintf(['Force_RMSE_model',num2str(g),'.epsc']);
+        fr_eps=sprintf(['Force_RMSE_model',num2str(g),'.epsc']);
 %         saveas(figure(level+3),fr_eps);  
 %% ªÊ÷∆force_entropy”ÎIDµƒ«˙œﬂ
         figure(level+4),
@@ -470,7 +420,7 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
         hhh_i=legend ('Model',num2str(g),'Location','NorthEast');  %Pilot
         set(hhh_i,'Box','off');
         axis([3.5 6 0 3]);
-%         fe_eps=sprintf(['Force_entropy_model',num2str(g),'.epsc']);
+        fe_eps=sprintf(['Force_entropy_model',num2str(g),'.epsc']);
 %         saveas(figure(level+4),fe_eps);
 %% ªÊ÷∆average completion time”ÎIDµƒ«˙œﬂ
         figure(level+5),
@@ -483,13 +433,12 @@ color=[1 0 0;0 1 0;0 0 1;0.5 0.8 0.9;0 0 0;0 1 1;1 0 1;0.5 0.5 0.5];%∂®“Â“ª∏ˆ—’…
         xlabel('ID');
         ylabel('Average of completion time(s)');
         title('Averager completion time °™ ID');
-        axis([3.5 6 0 7]);
+%         axis([3.5 6 0 7]);
 %         png=sprintf('Force_entropy-ID.png');
-%         saveas(figure(level+1),png);
+%         saveas(figure(level+1),png); pilot_model_fitts/S5_all_data/outcome_data/model_
 %%  Ω·π˚±£¥ÊŒ™.matŒƒº˛  
-cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\full_model_fitts\single_finger_force_control_task\S6_all_data\outcome_data');  %single_finger_force_control_task   grip_force_control_task
-save(['S6_single_finger_fitts_force_metrics_analysis_model_',num2str(g),'.mat']);    % S6_grip_fitts_force_metrics_analysis_model_    S6_single_finger_fitts_force_metrics_analysis_model_',num2str(g),'
-csvwrite(['force_ref_model',num2str(g),'.csv'],force_mm_resa_aver,0,0); 
+cd('D:\Luoqi\fitts_law\fitts_all_result_analysis\pilot_model_fitts\S5_all_data\outcome_data');  
+save(['S5_ba_fitts_force_metrics_analysis_model_',num2str(g),'.mat']);  
 %%
-cd D:\Luoqi\fitts_law\local_fitts_law_data_processing_code\data_analysis;
+% cd D:\Luoqi\fitts_law\local_fitts_law_data_processing_code\data_analysis;
 
